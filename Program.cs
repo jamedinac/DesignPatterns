@@ -1,11 +1,9 @@
 ﻿namespace DesignPatterns
 {
     using DesignPatterns.Core;
-    using DesignPatterns.Decorators;
     using DesignPatterns.Patterns.Adapter;
     using DesignPatterns.Patterns.Command;
     using DesignPatterns.Patterns.Composite;
-    using DesignPatterns.Patterns.Observer;
     using DesignPatterns.Patterns.Creational;
 
     class Program
@@ -14,42 +12,25 @@
         {
             List<string> tasks = new List<string> { "Email", "Image", "Pdf" };
 
-            CommandQueue queue = new CommandQueue();
-            IExecutionStrategy immediateStrategy = new ImmediateExecution();
+            var queue = new CommandQueue();
+            var immediateStrategy = new ImmediateExecution();
 
-            Task legacyTask = new LegacyJobAdapater(new LegacyPrintJob());
-            Task decoratedLegacyTask = new RetryTaskDecorator(
-                new TimingTaskDecorator(
-                    new LoggingTaskDecorator(legacyTask)
-                ), retries: 3);
-
-            var observableTask = new ObservableTask(decoratedLegacyTask);
-            observableTask.AddObserver(new ConsoleLogger());
-            observableTask.AddObserver(new MetricsLogger());
+            queue.Enqueue(CommandFactory.Create(new LegacyJobAdapter(new LegacyPrintJob()), immediateStrategy));
 
 
-            ICommand legacyCommand = new TaskCommand(observableTask, immediateStrategy);
-            queue.Enqueue(legacyCommand);
-
-            var compositeTasks = new CompositeTask();
             foreach (string taskType in tasks)
             {
-                Task baseTask = TaskFactory.CreateTask(taskType);
-                Task decoratedTask = new RetryTaskDecorator(
-                            new TimingTaskDecorator(
-                                new LoggingTaskDecorator(baseTask)
-                            ),
-                            retries: 3);
-
-                observableTask = new ObservableTask(decoratedTask);
-                observableTask.AddObserver(new ConsoleLogger());
-                observableTask.AddObserver(new MetricsLogger());
-
-                compositeTasks.AddTask(observableTask);
+                queue.Enqueue(CommandFactory.Create(taskType, immediateStrategy));
             }
 
-            ICommand command = new TaskCommand(compositeTasks, immediateStrategy);
-            queue.Enqueue(command);
+            var compositeTasks = new CompositeTask();
+            foreach (string task in tasks)
+            {
+                compositeTasks.AddTask(TaskFactory.CreateTask(task));
+            }
+
+            queue.Enqueue(CommandFactory.Create(compositeTasks, immediateStrategy));
+
             queue.ExecuteAll();
         }
     }

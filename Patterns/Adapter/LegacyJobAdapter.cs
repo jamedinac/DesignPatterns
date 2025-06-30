@@ -2,10 +2,10 @@ namespace DesignPatterns.Patterns.Adapter
 {
     using DesignPatterns.Core;
     
-    public class LegacyJobAdapater : Task
+    public class LegacyJobAdapter : Task
     {
         private ILegacyJob job;
-        public LegacyJobAdapater(ILegacyJob job)
+        public LegacyJobAdapter(ILegacyJob job)
         {
             this.job = job;
         }

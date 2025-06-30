@@ -1,5 +1,6 @@
-namespace DesignPatterns.Core
+namespace DesignPatterns.Patterns.Creational
 {
+    using DesignPatterns.Core;
     public class PdfTask : Task
     {
         public override void Run()

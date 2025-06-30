@@ -6,48 +6,7 @@
     using DesignPatterns.Patterns.Command;
     using DesignPatterns.Patterns.Composite;
     using DesignPatterns.Patterns.Observer;
-
-    public class ImageTask : Task
-    {
-        public override void Run()
-        {
-            Console.WriteLine("This is an image task running");
-        }
-    }
-
-    public class PdfTask : Task
-    {
-        public override void Run()
-        {
-            Console.WriteLine("This is a Pdf task running");
-        }
-    }
-
-    public class EmailTask : Task
-    {
-        public override void Run()
-        {
-            Console.WriteLine("This is an Email task running");
-        }
-    }
-
-    public class TaskFactory
-    {
-        public static Task CreateTask(string taskType)
-        {
-            switch (taskType)
-            {
-                case "Image":
-                    return new ImageTask();
-                case "Pdf":
-                    return new PdfTask();
-                case "Email":
-                    return new EmailTask();
-                default:
-                    throw new NotSupportedException("task type not supported");
-            }
-        }
-    }
+    using DesignPatterns.Patterns.Creational;
 
     class Program
     {
